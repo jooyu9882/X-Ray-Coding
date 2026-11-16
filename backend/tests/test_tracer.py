@@ -173,3 +173,24 @@ def test_serialize_custom_object_with_broken_repr():
             raise RuntimeError("no")
 
     assert serialize(Bad()) == {"type": "Bad", "repr": "<Bad object>"}
+
+
+
+def test_output_limit_survives_bare_except():
+    result = run("""\
+        for _ in range(100):
+            try:
+                print("abc")
+            except:
+                pass
+        """, max_output=10)
+    assert result["stdout"] == "abc\nabc\nab"
+    assert result["error"]["type"] == "OutputLimitExceeded"
+
+
+def test_custom_builtins_replace_defaults():
+    result = run("print(len('ab'))\nopen('x')\n",
+                 builtins={"print": print, "len": len})
+    assert result["stdout"] == "2\n"
+    assert result["error"]["type"] == "NameError"
+    assert result["error"]["line"] == 2
