@@ -8,6 +8,7 @@ credentials.json
 
 # Local only
 CLAUDE.local.md
+notes/
 .claude/settings.local.json
 .claude/skills/
 skills-lock.json
@@ -31,3 +32,5 @@ build/
 Thumbs.db
 .DS_Store
 .idea/
+
+notes/
