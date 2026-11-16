@@ -102,8 +102,10 @@ def serialize(value, depth=0):
     """Convert a Python value into a JSON-safe snapshot.
 
     - None, bool, str, finite float and JS-safe int stay native JSON.
-    - Sequences/sets -> {"type": "list", "items": [...], "truncated": bool}
-    - Mappings       -> {"type": "dict", "items": [[k, v], ...], "truncated": bool}
+    - Sequences/sets -> {"type": "list", "kind": "sequence", "items": [...],
+                         "truncated": bool}
+    - Mappings       -> {"type": "dict", "kind": "mapping",
+                         "items": [[k, v], ...], "truncated": bool}
       (pairs, because keys can be ints or tuples, not only strings)
     - Everything else -> {"type": <type name>, "repr": "..."}
 
@@ -149,6 +151,7 @@ def serialize(value, depth=0):
             items = [serialize(v, depth + 1) for v in shown]
         return {
             "type": type(value).__name__,
+            "kind": "mapping" if is_mapping else "sequence",
             "items": items,
             "truncated": len(source) > MAX_ITEMS,
         }

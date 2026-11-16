@@ -134,12 +134,13 @@ def test_serialize_native_values():
 
 def test_serialize_containers():
     assert serialize([1, (2, 3)]) == {
-        "type": "list",
-        "items": [1, {"type": "tuple", "items": [2, 3], "truncated": False}],
+        "type": "list", "kind": "sequence",
+        "items": [1, {"type": "tuple", "kind": "sequence", "items": [2, 3],
+                      "truncated": False}],
         "truncated": False,
     }
     assert serialize({1: "a"}) == {
-        "type": "dict", "items": [[1, "a"]], "truncated": False,
+        "type": "dict", "kind": "mapping", "items": [[1, "a"]], "truncated": False,
     }
 
 
