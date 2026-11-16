@@ -102,8 +102,10 @@ def serialize(value, depth=0):
     """Convert a Python value into a JSON-safe snapshot.
 
     - None, bool, str, finite float and JS-safe int stay native JSON.
-    - Sequences/sets -> {"type": "list", "items": [...], "truncated": bool}
-    - Mappings       -> {"type": "dict", "items": [[k, v], ...], "truncated": bool}
+    - Sequences/sets -> {"type": "list", "kind": "sequence", "items": [...],
+                         "truncated": bool}
+    - Mappings       -> {"type": "dict", "kind": "mapping",
+                         "items": [[k, v], ...], "truncated": bool}
       (pairs, because keys can be ints or tuples, not only strings)
     - Everything else -> {"type": <type name>, "repr": "..."}
 
@@ -149,6 +151,7 @@ def serialize(value, depth=0):
             items = [serialize(v, depth + 1) for v in shown]
         return {
             "type": type(value).__name__,
+            "kind": "mapping" if is_mapping else "sequence",
             "items": items,
             "truncated": len(source) > MAX_ITEMS,
         }
@@ -172,8 +175,9 @@ def _serialize_locals(frame):
 # ---------------------------------------------------------------------------
 
 class Tracer:
-    def __init__(self, max_steps):
+    def __init__(self, max_steps, output):
         self.max_steps = max_steps
+        self.output = output  # to record how much stdout exists at each step
         self.steps = []
         self.line_counts = collections.Counter()
         self.limit_hit = False
@@ -207,6 +211,9 @@ class Tracer:
             "func": frame.f_code.co_name,
             "locals": _serialize_locals(frame),
             "stack": self._stack(frame),
+            # stdout[:stdout_len] is the output printed before this step,
+            # so the UI can rewind the output panel too.
+            "stdout_len": self.output.size,
         }
         if event == "return":
             step["return_value"] = serialize(arg)
@@ -253,8 +260,8 @@ def trace_code(source, max_steps=MAX_STEPS, max_output=MAX_OUTPUT,
         }
         return result
 
-    tracer = Tracer(max_steps)
     stdout = _LimitedOutput(max_output)
+    tracer = Tracer(max_steps, stdout)
     user_globals = {"__name__": "__main__"}
     if builtins is not None:
         user_globals["__builtins__"] = builtins
