@@ -172,8 +172,9 @@ def _serialize_locals(frame):
 # ---------------------------------------------------------------------------
 
 class Tracer:
-    def __init__(self, max_steps):
+    def __init__(self, max_steps, output):
         self.max_steps = max_steps
+        self.output = output  # to record how much stdout exists at each step
         self.steps = []
         self.line_counts = collections.Counter()
         self.limit_hit = False
@@ -207,6 +208,9 @@ class Tracer:
             "func": frame.f_code.co_name,
             "locals": _serialize_locals(frame),
             "stack": self._stack(frame),
+            # stdout[:stdout_len] is the output printed before this step,
+            # so the UI can rewind the output panel too.
+            "stdout_len": self.output.size,
         }
         if event == "return":
             step["return_value"] = serialize(arg)
@@ -253,8 +257,8 @@ def trace_code(source, max_steps=MAX_STEPS, max_output=MAX_OUTPUT,
         }
         return result
 
-    tracer = Tracer(max_steps)
     stdout = _LimitedOutput(max_output)
+    tracer = Tracer(max_steps, stdout)
     user_globals = {"__name__": "__main__"}
     if builtins is not None:
         user_globals["__builtins__"] = builtins

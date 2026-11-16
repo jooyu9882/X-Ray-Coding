@@ -32,7 +32,7 @@ def test_fibonacci_trace():
     assert len(calls) == 9
     assert calls[0] == {
         "line": 1, "event": "call", "func": "fib",
-        "locals": {"n": 4}, "stack": ["<module>", "fib"],
+        "locals": {"n": 4}, "stack": ["<module>", "fib"], "stdout_len": 0,
     }
     deepest = max((s["stack"] for s in result["steps"]), key=len)
     assert deepest == ["<module>", "fib", "fib", "fib", "fib"]  # fib(4)..fib(1)
@@ -194,3 +194,14 @@ def test_custom_builtins_replace_defaults():
     assert result["stdout"] == "2\n"
     assert result["error"]["type"] == "NameError"
     assert result["error"]["line"] == 2
+
+
+def test_stdout_len_tracks_output_before_each_step():
+    result = run("""\
+        print("ab")
+        print("c")
+        x = 1
+        """)
+    lines = {s["line"]: s["stdout_len"] for s in result["steps"]
+             if s["event"] == "line"}
+    assert lines == {1: 0, 2: 3, 3: 5}
