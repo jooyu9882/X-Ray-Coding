@@ -199,6 +199,64 @@ button.run {
   background: rgba(255, 110, 100, 0.22);
 }
 
+/*
+ * Heatmap: more runs = more exposure, so busier lines are lighter on the
+ * film. One hue (bone), five steps of increasing lightness. The top step is
+ * capped so code text keeps readable contrast on it. Drawn as a background
+ * image so the legend swatches can keep the film color underneath.
+ */
+.film-heat-1 { background-image: linear-gradient(rgba(238, 243, 236, 0.05), rgba(238, 243, 236, 0.05)); }
+.film-heat-2 { background-image: linear-gradient(rgba(238, 243, 236, 0.1), rgba(238, 243, 236, 0.1)); }
+.film-heat-3 { background-image: linear-gradient(rgba(238, 243, 236, 0.16), rgba(238, 243, 236, 0.16)); }
+.film-heat-4 { background-image: linear-gradient(rgba(238, 243, 236, 0.23), rgba(238, 243, 236, 0.23)); }
+.film-heat-5 { background-image: linear-gradient(rgba(238, 243, 236, 0.32), rgba(238, 243, 236, 0.32)); }
+
+.heat-tools {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.toggle input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--film);
+}
+
+.heat-legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 20px;
+  color: var(--ink-muted);
+  font-size: var(--size-small);
+}
+
+.heat-ramp {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.heat-swatches {
+  display: inline-flex;
+  gap: 2px;
+}
+
+.heat-swatch {
+  width: 22px;
+  height: 14px;
+  border-radius: 2px;
+  background-color: var(--film);
+}
+
 /* --- Step controls -------------------------------------------------------- */
 
 .controls {
@@ -380,6 +438,77 @@ button.run {
 .error-panel ul {
   margin: 0;
   padding-left: 1.2em;
+}
+
+/* --- Call tree ------------------------------------------------------------ */
+
+.tree-hint {
+  font-size: var(--size-small);
+  margin-bottom: 8px;
+}
+
+.tree-scroll {
+  overflow: auto;
+  max-height: 420px;
+  padding-bottom: 4px;
+}
+
+.tree {
+  display: block;
+  font-family: var(--font-code);
+  font-size: 13px;
+}
+
+.tree-edge {
+  stroke: var(--lightbox-edge);
+  stroke-width: 1.5;
+}
+
+.tree-node {
+  cursor: pointer;
+  outline: none;
+}
+
+.tree-node rect {
+  fill: var(--paper);
+  stroke: var(--lightbox-edge);
+  stroke-width: 1;
+}
+
+.tree-node text {
+  text-anchor: middle;
+  fill: var(--ink);
+}
+
+.tree-node .tree-result {
+  fill: var(--ink-muted);
+}
+
+/* Calls still waiting on the stack. */
+.tree-node.running rect {
+  stroke: var(--film);
+  stroke-width: 1.5;
+}
+
+/* The call executing right now: the exposed spot, as in the editor. */
+.tree-node.current rect {
+  fill: var(--film);
+  stroke: var(--exposure);
+  stroke-width: 2;
+}
+
+.tree-node.current text {
+  fill: var(--bone);
+}
+
+.tree-node.raised .tree-result {
+  fill: var(--error);
+}
+
+.tree-node:hover rect,
+.tree-node:focus-visible rect {
+  stroke: var(--exposure);
+  stroke-width: 3;
 }
 
 /* --- Small screens ------------------------------------------------------- */
