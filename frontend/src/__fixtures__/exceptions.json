@@ -1,0 +1,279 @@
+{
+ "steps": [
+  {
+   "line": 1,
+   "event": "line",
+   "func": "<module>",
+   "locals": {},
+   "stack": [
+    "<module>"
+   ],
+   "stdout_len": 0
+  },
+  {
+   "line": 7,
+   "event": "line",
+   "func": "<module>",
+   "locals": {
+    "safe_div": {
+     "type": "function",
+     "repr": "<function safe_div>"
+    }
+   },
+   "stack": [
+    "<module>"
+   ],
+   "stdout_len": 0
+  },
+  {
+   "line": 10,
+   "event": "line",
+   "func": "<module>",
+   "locals": {
+    "safe_div": {
+     "type": "function",
+     "repr": "<function safe_div>"
+    },
+    "boom": {
+     "type": "function",
+     "repr": "<function boom>"
+    }
+   },
+   "stack": [
+    "<module>"
+   ],
+   "stdout_len": 0
+  },
+  {
+   "line": 1,
+   "event": "call",
+   "func": "safe_div",
+   "locals": {
+    "a": 1,
+    "b": 0
+   },
+   "stack": [
+    "<module>",
+    "safe_div"
+   ],
+   "stdout_len": 0
+  },
+  {
+   "line": 2,
+   "event": "line",
+   "func": "safe_div",
+   "locals": {
+    "a": 1,
+    "b": 0
+   },
+   "stack": [
+    "<module>",
+    "safe_div"
+   ],
+   "stdout_len": 0
+  },
+  {
+   "line": 3,
+   "event": "line",
+   "func": "safe_div",
+   "locals": {
+    "a": 1,
+    "b": 0
+   },
+   "stack": [
+    "<module>",
+    "safe_div"
+   ],
+   "stdout_len": 0
+  },
+  {
+   "line": 3,
+   "event": "exception",
+   "func": "safe_div",
+   "locals": {
+    "a": 1,
+    "b": 0
+   },
+   "stack": [
+    "<module>",
+    "safe_div"
+   ],
+   "stdout_len": 0,
+   "exception": {
+    "type": "ZeroDivisionError",
+    "message": "division by zero"
+   }
+  },
+  {
+   "line": 4,
+   "event": "line",
+   "func": "safe_div",
+   "locals": {
+    "a": 1,
+    "b": 0
+   },
+   "stack": [
+    "<module>",
+    "safe_div"
+   ],
+   "stdout_len": 0
+  },
+  {
+   "line": 5,
+   "event": "line",
+   "func": "safe_div",
+   "locals": {
+    "a": 1,
+    "b": 0
+   },
+   "stack": [
+    "<module>",
+    "safe_div"
+   ],
+   "stdout_len": 0
+  },
+  {
+   "line": 5,
+   "event": "return",
+   "func": "safe_div",
+   "locals": {
+    "a": 1,
+    "b": 0
+   },
+   "stack": [
+    "<module>",
+    "safe_div"
+   ],
+   "stdout_len": 0,
+   "return_value": null
+  },
+  {
+   "line": 11,
+   "event": "line",
+   "func": "<module>",
+   "locals": {
+    "safe_div": {
+     "type": "function",
+     "repr": "<function safe_div>"
+    },
+    "boom": {
+     "type": "function",
+     "repr": "<function boom>"
+    }
+   },
+   "stack": [
+    "<module>"
+   ],
+   "stdout_len": 0
+  },
+  {
+   "line": 7,
+   "event": "call",
+   "func": "boom",
+   "locals": {},
+   "stack": [
+    "<module>",
+    "boom"
+   ],
+   "stdout_len": 0
+  },
+  {
+   "line": 8,
+   "event": "line",
+   "func": "boom",
+   "locals": {},
+   "stack": [
+    "<module>",
+    "boom"
+   ],
+   "stdout_len": 0
+  },
+  {
+   "line": 8,
+   "event": "exception",
+   "func": "boom",
+   "locals": {},
+   "stack": [
+    "<module>",
+    "boom"
+   ],
+   "stdout_len": 0,
+   "exception": {
+    "type": "ZeroDivisionError",
+    "message": "division by zero"
+   }
+  },
+  {
+   "line": 8,
+   "event": "return",
+   "func": "boom",
+   "locals": {},
+   "stack": [
+    "<module>",
+    "boom"
+   ],
+   "stdout_len": 0,
+   "return_value": null
+  },
+  {
+   "line": 11,
+   "event": "exception",
+   "func": "<module>",
+   "locals": {
+    "safe_div": {
+     "type": "function",
+     "repr": "<function safe_div>"
+    },
+    "boom": {
+     "type": "function",
+     "repr": "<function boom>"
+    }
+   },
+   "stack": [
+    "<module>"
+   ],
+   "stdout_len": 0,
+   "exception": {
+    "type": "ZeroDivisionError",
+    "message": "division by zero"
+   }
+  },
+  {
+   "line": 11,
+   "event": "return",
+   "func": "<module>",
+   "locals": {
+    "safe_div": {
+     "type": "function",
+     "repr": "<function safe_div>"
+    },
+    "boom": {
+     "type": "function",
+     "repr": "<function boom>"
+    }
+   },
+   "stack": [
+    "<module>"
+   ],
+   "stdout_len": 0,
+   "return_value": null
+  }
+ ],
+ "line_counts": {
+  "1": 1,
+  "2": 1,
+  "3": 1,
+  "4": 1,
+  "5": 1,
+  "7": 1,
+  "8": 1,
+  "10": 1,
+  "11": 1
+ },
+ "stdout": "",
+ "error": {
+  "type": "ZeroDivisionError",
+  "message": "division by zero",
+  "line": 8
+ }
+}

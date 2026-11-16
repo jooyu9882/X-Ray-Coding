@@ -1,0 +1,343 @@
+{
+ "steps": [
+  {
+   "line": 1,
+   "event": "line",
+   "func": "<module>",
+   "locals": {},
+   "stack": [
+    "<module>"
+   ],
+   "stdout_len": 0
+  },
+  {
+   "line": 6,
+   "event": "line",
+   "func": "<module>",
+   "locals": {
+    "fib": {
+     "type": "function",
+     "repr": "<function fib>"
+    }
+   },
+   "stack": [
+    "<module>"
+   ],
+   "stdout_len": 0
+  },
+  {
+   "line": 1,
+   "event": "call",
+   "func": "fib",
+   "locals": {
+    "n": 3
+   },
+   "stack": [
+    "<module>",
+    "fib"
+   ],
+   "stdout_len": 0
+  },
+  {
+   "line": 2,
+   "event": "line",
+   "func": "fib",
+   "locals": {
+    "n": 3
+   },
+   "stack": [
+    "<module>",
+    "fib"
+   ],
+   "stdout_len": 0
+  },
+  {
+   "line": 4,
+   "event": "line",
+   "func": "fib",
+   "locals": {
+    "n": 3
+   },
+   "stack": [
+    "<module>",
+    "fib"
+   ],
+   "stdout_len": 0
+  },
+  {
+   "line": 1,
+   "event": "call",
+   "func": "fib",
+   "locals": {
+    "n": 2
+   },
+   "stack": [
+    "<module>",
+    "fib",
+    "fib"
+   ],
+   "stdout_len": 0
+  },
+  {
+   "line": 2,
+   "event": "line",
+   "func": "fib",
+   "locals": {
+    "n": 2
+   },
+   "stack": [
+    "<module>",
+    "fib",
+    "fib"
+   ],
+   "stdout_len": 0
+  },
+  {
+   "line": 4,
+   "event": "line",
+   "func": "fib",
+   "locals": {
+    "n": 2
+   },
+   "stack": [
+    "<module>",
+    "fib",
+    "fib"
+   ],
+   "stdout_len": 0
+  },
+  {
+   "line": 1,
+   "event": "call",
+   "func": "fib",
+   "locals": {
+    "n": 1
+   },
+   "stack": [
+    "<module>",
+    "fib",
+    "fib",
+    "fib"
+   ],
+   "stdout_len": 0
+  },
+  {
+   "line": 2,
+   "event": "line",
+   "func": "fib",
+   "locals": {
+    "n": 1
+   },
+   "stack": [
+    "<module>",
+    "fib",
+    "fib",
+    "fib"
+   ],
+   "stdout_len": 0
+  },
+  {
+   "line": 3,
+   "event": "line",
+   "func": "fib",
+   "locals": {
+    "n": 1
+   },
+   "stack": [
+    "<module>",
+    "fib",
+    "fib",
+    "fib"
+   ],
+   "stdout_len": 0
+  },
+  {
+   "line": 3,
+   "event": "return",
+   "func": "fib",
+   "locals": {
+    "n": 1
+   },
+   "stack": [
+    "<module>",
+    "fib",
+    "fib",
+    "fib"
+   ],
+   "stdout_len": 0,
+   "return_value": 1
+  },
+  {
+   "line": 1,
+   "event": "call",
+   "func": "fib",
+   "locals": {
+    "n": 0
+   },
+   "stack": [
+    "<module>",
+    "fib",
+    "fib",
+    "fib"
+   ],
+   "stdout_len": 0
+  },
+  {
+   "line": 2,
+   "event": "line",
+   "func": "fib",
+   "locals": {
+    "n": 0
+   },
+   "stack": [
+    "<module>",
+    "fib",
+    "fib",
+    "fib"
+   ],
+   "stdout_len": 0
+  },
+  {
+   "line": 3,
+   "event": "line",
+   "func": "fib",
+   "locals": {
+    "n": 0
+   },
+   "stack": [
+    "<module>",
+    "fib",
+    "fib",
+    "fib"
+   ],
+   "stdout_len": 0
+  },
+  {
+   "line": 3,
+   "event": "return",
+   "func": "fib",
+   "locals": {
+    "n": 0
+   },
+   "stack": [
+    "<module>",
+    "fib",
+    "fib",
+    "fib"
+   ],
+   "stdout_len": 0,
+   "return_value": 0
+  },
+  {
+   "line": 4,
+   "event": "return",
+   "func": "fib",
+   "locals": {
+    "n": 2
+   },
+   "stack": [
+    "<module>",
+    "fib",
+    "fib"
+   ],
+   "stdout_len": 0,
+   "return_value": 1
+  },
+  {
+   "line": 1,
+   "event": "call",
+   "func": "fib",
+   "locals": {
+    "n": 1
+   },
+   "stack": [
+    "<module>",
+    "fib",
+    "fib"
+   ],
+   "stdout_len": 0
+  },
+  {
+   "line": 2,
+   "event": "line",
+   "func": "fib",
+   "locals": {
+    "n": 1
+   },
+   "stack": [
+    "<module>",
+    "fib",
+    "fib"
+   ],
+   "stdout_len": 0
+  },
+  {
+   "line": 3,
+   "event": "line",
+   "func": "fib",
+   "locals": {
+    "n": 1
+   },
+   "stack": [
+    "<module>",
+    "fib",
+    "fib"
+   ],
+   "stdout_len": 0
+  },
+  {
+   "line": 3,
+   "event": "return",
+   "func": "fib",
+   "locals": {
+    "n": 1
+   },
+   "stack": [
+    "<module>",
+    "fib",
+    "fib"
+   ],
+   "stdout_len": 0,
+   "return_value": 1
+  },
+  {
+   "line": 4,
+   "event": "return",
+   "func": "fib",
+   "locals": {
+    "n": 3
+   },
+   "stack": [
+    "<module>",
+    "fib"
+   ],
+   "stdout_len": 0,
+   "return_value": 2
+  },
+  {
+   "line": 6,
+   "event": "return",
+   "func": "<module>",
+   "locals": {
+    "fib": {
+     "type": "function",
+     "repr": "<function fib>"
+    }
+   },
+   "stack": [
+    "<module>"
+   ],
+   "stdout_len": 2,
+   "return_value": null
+  }
+ ],
+ "line_counts": {
+  "1": 1,
+  "2": 5,
+  "3": 3,
+  "4": 2,
+  "6": 1
+ },
+ "stdout": "2\n",
+ "error": null
+}
