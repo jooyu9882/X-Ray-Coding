@@ -1,9 +1,11 @@
 import Editor, { type BeforeMount, type OnMount } from "@monaco-editor/react";
 import { useEffect, useRef } from "react";
+import { timesLabel, type LineHeat } from "../heatmap";
 
 type EditorInstance = Parameters<OnMount>[0];
 type MonacoApi = Parameters<OnMount>[1];
 type Decorations = ReturnType<EditorInstance["createDecorationsCollection"]>;
+type DecorationList = Parameters<Decorations["set"]>[0][number][];
 
 interface Props {
   code: string;
@@ -11,6 +13,8 @@ interface Props {
   /** Line about to run at the current step, or null when nothing is traced. */
   currentLine: number | null;
   errorLines: number[];
+  /** Per-line execution heat, or null when the heatmap is off. */
+  heat: LineHeat[] | null;
 }
 
 // The code sits on a dark "film"; the current line is the exposed spot.
@@ -37,7 +41,13 @@ const defineFilmTheme: BeforeMount = (monaco) => {
   });
 };
 
-export function CodeFilm({ code, onChange, currentLine, errorLines }: Props) {
+export function CodeFilm({
+  code,
+  onChange,
+  currentLine,
+  errorLines,
+  heat,
+}: Props) {
   const editorRef = useRef<EditorInstance | null>(null);
   const monacoRef = useRef<MonacoApi | null>(null);
   const decorationsRef = useRef<Decorations | null>(null);
@@ -52,26 +62,47 @@ export function CodeFilm({ code, onChange, currentLine, errorLines }: Props) {
     const editor = editorRef.current;
     const monaco = monacoRef.current;
     const decorations = decorationsRef.current;
-    if (!editor || !monaco || !decorations) return;
+    const model = editor?.getModel();
+    if (!editor || !monaco || !decorations || !model) return;
 
-    const lineRange = (line: number) => new monaco.Range(line, 1, line, 1);
-    const items = errorLines.map((line) => ({
-      range: lineRange(line),
-      options: { isWholeLine: true, className: "film-error-line" },
-    }));
-    if (currentLine !== null && currentLine > 0) {
+    const lineCount = model.getLineCount();
+    const inRange = (line: number) => line >= 1 && line <= lineCount;
+    // Span the whole text of the line so hovering anywhere on it works.
+    const lineRange = (line: number) =>
+      new monaco.Range(line, 1, line, model.getLineMaxColumn(line));
+    const items: DecorationList = [];
+
+    // Heat goes first so the current-line glow is drawn above it.
+    for (const { line, count, level } of heat ?? []) {
+      if (!inRange(line)) continue;
+      items.push({
+        range: lineRange(line),
+        options: {
+          isWholeLine: true,
+          className: `film-heat-${level}`,
+          hoverMessage: { value: `Line ${line} ran ${timesLabel(count)}` },
+        },
+      });
+    }
+    for (const line of errorLines.filter(inRange)) {
+      items.push({
+        range: lineRange(line),
+        options: { isWholeLine: true, className: "film-error-line" },
+      });
+    }
+    if (currentLine !== null && inRange(currentLine)) {
       items.push({
         range: lineRange(currentLine),
         options: {
           isWholeLine: true,
           className: "film-current-line",
           linesDecorationsClassName: "film-current-gutter",
-        } as (typeof items)[number]["options"],
+        },
       });
       editor.revealLineInCenterIfOutsideViewport(currentLine);
     }
     decorations.set(items);
-  }, [currentLine, errorLines]);
+  }, [currentLine, errorLines, heat]);
 
   return (
     <div className="film" aria-label="Code editor">

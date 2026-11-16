@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { RequestError, traceCode } from "./api";
+import { CallTree } from "./components/CallTree";
 import { CodeFilm } from "./components/CodeFilm";
+import { HeatLegend } from "./components/HeatLegend";
 import {
   CallStackPanel,
   ErrorPanel,
@@ -10,6 +12,7 @@ import {
 import { StepControls } from "./components/StepControls";
 import { EXAMPLES } from "./examples";
 import { describeStep } from "./format";
+import { heatLevels } from "./heatmap";
 import type { Trace } from "./types";
 
 function isTypingTarget(target: EventTarget | null): boolean {
@@ -26,6 +29,7 @@ export default function App() {
   const [index, setIndex] = useState(0);
   const [running, setRunning] = useState(false);
   const [requestError, setRequestError] = useState<string | null>(null);
+  const [showHeat, setShowHeat] = useState(false);
 
   const steps = trace?.steps ?? [];
   const step = steps[index];
@@ -72,6 +76,11 @@ export default function App() {
     setCode(next);
     setTrace(null); // the old trace no longer matches the code
   };
+
+  const heat = useMemo(
+    () => (trace ? heatLevels(trace.line_counts) : []),
+    [trace],
+  );
 
   const errorLines = useMemo(() => {
     if (!error) return [];
@@ -121,9 +130,23 @@ export default function App() {
             onChange={editCode}
             currentLine={step && !error ? step.line : null}
             errorLines={errorLines}
+            heat={showHeat && heat.length > 0 ? heat : null}
           />
           {steps.length > 0 && (
             <StepControls index={index} total={steps.length} onChange={goTo} />
+          )}
+          {heat.length > 0 && (
+            <div className="heat-tools">
+              <label className="toggle">
+                <input
+                  type="checkbox"
+                  checked={showHeat}
+                  onChange={(event) => setShowHeat(event.target.checked)}
+                />
+                Show how often each line ran
+              </label>
+              {showHeat && <HeatLegend heat={heat} />}
+            </div>
           )}
         </div>
 
@@ -163,6 +186,7 @@ export default function App() {
               text={step ? trace.stdout.slice(0, step.stdout_len) : trace.stdout}
             />
           )}
+          {step && <CallTree steps={steps} index={index} onSelect={goTo} />}
         </aside>
       </main>
     </div>
