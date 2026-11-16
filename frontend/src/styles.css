@@ -1,0 +1,417 @@
+/*
+ * Lightbox and film: the page is a radiologist's lightbox, the code is the
+ * film clipped onto it, and the line about to run is the exposed spot.
+ */
+:root {
+  --lightbox: #e7edef;
+  --lightbox-edge: #c9d6db;
+  --paper: #f6f9fa;
+  --film: #12283a;
+  --film-edge: #0b1c29;
+  --bone: #eef3ec;
+  --exposure: #7fd3e6;
+  --exposure-soft: rgba(127, 211, 230, 0.2);
+  --ink: #1a2a35;
+  --ink-muted: #556a77;
+  --error: #b3261e;
+  --error-soft: #f8e3e1;
+
+  --font-ui: "Atkinson Hyperlegible Next", "Segoe UI", system-ui, sans-serif;
+  --font-code: "JetBrains Mono", ui-monospace, "Cascadia Mono", monospace;
+
+  /* Type scale: 1.2 ratio from a 16px base. */
+  --size-small: 0.833rem;
+  --size-base: 1rem;
+  --size-lead: 1.2rem;
+  --size-title: 2.074rem;
+
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --lightbox: #1d2a32;
+    --lightbox-edge: #31434e;
+    --paper: #24333c;
+    --ink: #e3ecef;
+    --ink-muted: #9fb3bd;
+    --error: #ff8a80;
+    --error-soft: #3d2423;
+    color-scheme: dark;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--lightbox);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: var(--size-base);
+  line-height: 1.5;
+}
+
+h1,
+h2,
+p {
+  margin: 0;
+}
+
+button,
+select,
+input {
+  font: inherit;
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 3px solid var(--exposure);
+  outline-offset: 2px;
+}
+
+.app {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 24px 32px 48px;
+}
+
+/* --- Masthead ------------------------------------------------------------ */
+
+.masthead {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: baseline;
+  gap: 8px 24px;
+  padding-bottom: 20px;
+}
+
+.masthead h1 {
+  font-size: var(--size-title);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.tagline {
+  color: var(--ink-muted);
+  font-size: var(--size-lead);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.example-picker {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--ink-muted);
+}
+
+.example-picker select {
+  padding: 8px 10px;
+  border: 1px solid var(--lightbox-edge);
+  border-radius: 6px;
+  background: var(--paper);
+}
+
+button {
+  padding: 8px 16px;
+  border: 1px solid var(--lightbox-edge);
+  border-radius: 6px;
+  background: var(--paper);
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+
+button.run,
+button.primary {
+  border-color: var(--film);
+  background: var(--film);
+  color: var(--bone);
+  font-weight: 600;
+}
+
+button.run {
+  min-width: 7rem;
+  padding: 10px 24px;
+}
+
+/* --- Workspace ----------------------------------------------------------- */
+
+.workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(320px, 1fr);
+  gap: 32px;
+  align-items: start;
+}
+
+.film-column {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: sticky;
+  top: 16px;
+}
+
+/* The film: the one dark, saturated object on the page. */
+.film {
+  height: min(64vh, 640px);
+  border: 1px solid var(--film-edge);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--film);
+  box-shadow: 0 0 0 6px var(--lightbox-edge);
+}
+
+.film-loading {
+  color: var(--bone);
+  padding: 16px;
+}
+
+.film-current-line {
+  background: linear-gradient(
+    90deg,
+    rgba(127, 211, 230, 0.34),
+    rgba(127, 211, 230, 0.12) 70%,
+    rgba(127, 211, 230, 0.04)
+  );
+}
+
+.film-current-gutter {
+  background: var(--exposure);
+  width: 4px !important;
+  margin-left: 4px;
+}
+
+.film-error-line {
+  background: rgba(255, 110, 100, 0.22);
+}
+
+/* --- Step controls -------------------------------------------------------- */
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 24px;
+}
+
+.buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.scrubber {
+  flex: 1;
+  min-width: 200px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--ink-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.scrubber span {
+  min-width: 8.5em;
+}
+
+.scrubber input {
+  flex: 1;
+  accent-color: var(--film);
+}
+
+/* --- Readout (right column) ---------------------------------------------- */
+
+.readout {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  min-width: 0;
+}
+
+.readout h2 {
+  font-size: var(--size-base);
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.intro p {
+  max-width: 60ch;
+  color: var(--ink-muted);
+}
+
+.narration {
+  font-size: var(--size-lead);
+  font-weight: 600;
+  padding-left: 14px;
+  border-left: 4px solid var(--exposure);
+}
+
+.panel {
+  border-top: 1px solid var(--lightbox-edge);
+  padding-top: 12px;
+}
+
+.muted {
+  color: var(--ink-muted);
+}
+
+.variables {
+  margin: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.variable {
+  display: grid;
+  grid-template-columns: minmax(4rem, max-content) 1fr;
+  gap: 16px;
+  align-items: baseline;
+  padding: 6px 8px;
+  border-radius: 4px;
+}
+
+.variable dt {
+  font-family: var(--font-code);
+  font-weight: 600;
+}
+
+.variable dd {
+  margin: 0;
+  min-width: 0;
+}
+
+/* A value that just changed is lit up, like a fresh exposure. */
+.variable.changed {
+  background: var(--exposure-soft);
+}
+
+.value-text {
+  font-family: var(--font-code);
+  font-size: 0.9rem;
+  overflow-wrap: anywhere;
+}
+
+.cells {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0;
+}
+
+.cell {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 2.25rem;
+  border: 1px solid var(--lightbox-edge);
+  margin: 0 -1px -1px 0;
+  background: var(--paper);
+}
+
+.cell-index {
+  width: 100%;
+  text-align: center;
+  font-size: 0.7rem;
+  color: var(--ink-muted);
+  border-bottom: 1px solid var(--lightbox-edge);
+}
+
+.cell-value {
+  padding: 2px 6px;
+  font-family: var(--font-code);
+  font-size: 0.9rem;
+}
+
+.stack {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-code);
+  font-size: 0.9rem;
+}
+
+.stack li {
+  padding: 4px 8px;
+  color: var(--ink-muted);
+}
+
+.stack li.active {
+  color: var(--ink);
+  font-weight: 600;
+  border-left: 3px solid var(--exposure);
+}
+
+.output {
+  margin: 0;
+  padding: 12px;
+  max-height: 14rem;
+  overflow: auto;
+  border-radius: 6px;
+  background: var(--film);
+  color: var(--bone);
+  font-family: var(--font-code);
+  font-size: 0.9rem;
+  white-space: pre-wrap;
+}
+
+.error-panel {
+  padding: 12px 16px;
+  border-left: 4px solid var(--error);
+  background: var(--error-soft);
+  border-radius: 0 6px 6px 0;
+}
+
+.error-panel h2 {
+  color: var(--error);
+}
+
+.error-panel ul {
+  margin: 0;
+  padding-left: 1.2em;
+}
+
+/* --- Small screens ------------------------------------------------------- */
+
+@media (max-width: 900px) {
+  .app {
+    padding: 16px 16px 40px;
+  }
+
+  .masthead {
+    grid-template-columns: 1fr;
+  }
+
+  .actions {
+    flex-wrap: wrap;
+  }
+
+  .workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .film-column {
+    position: static;
+  }
+
+  .film {
+    height: 50vh;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    scroll-behavior: auto !important;
+  }
+}
