@@ -24,6 +24,7 @@ import types
 USER_FILENAME = "<user_code>"
 
 MAX_STEPS = 1000
+MAX_OUTPUT = 10_000  # characters of captured stdout
 MAX_DEPTH = 3  # how deep nested containers are expanded
 MAX_ITEMS = 50  # items shown per container
 MAX_STR_LEN = 200
@@ -36,6 +37,36 @@ class StepLimitExceeded(BaseException):
     BaseException (not Exception) so a plain `except Exception:` in user code
     does not swallow it.
     """
+
+
+class OutputLimitExceeded(BaseException):
+    """Raised by print() once captured stdout reaches max_output characters."""
+
+
+class _LimitedOutput(io.StringIO):
+    """stdout replacement that keeps at most `limit` characters.
+
+    Without this, `while True: print("x" * 10**6)` would grow memory until
+    the process dies, long before the step limit is reached.
+    """
+
+    def __init__(self, limit):
+        super().__init__()
+        self.limit = limit
+        self.size = 0
+        self.limit_hit = False
+
+    def write(self, text):
+        if self.limit_hit:
+            raise OutputLimitExceeded
+        room = self.limit - self.size
+        if len(text) > room:
+            super().write(text[:room])
+            self.size = self.limit
+            self.limit_hit = True
+            raise OutputLimitExceeded
+        self.size += len(text)
+        return super().write(text)
 
 
 # ---------------------------------------------------------------------------
@@ -203,8 +234,13 @@ def _error_line(exc):
     return line
 
 
-def trace_code(source, max_steps=MAX_STEPS):
-    """Run `source` under sys.settrace and return the trace as a dict."""
+def trace_code(source, max_steps=MAX_STEPS, max_output=MAX_OUTPUT,
+               builtins=None):
+    """Run `source` under sys.settrace and return the trace as a dict.
+
+    `builtins` replaces the user code's __builtins__ (the runner passes a
+    restricted dict). None keeps Python's normal builtins.
+    """
     result = {"steps": [], "line_counts": {}, "stdout": "", "error": None}
 
     try:
@@ -218,15 +254,17 @@ def trace_code(source, max_steps=MAX_STEPS):
         return result
 
     tracer = Tracer(max_steps)
-    stdout = io.StringIO()
+    stdout = _LimitedOutput(max_output)
     user_globals = {"__name__": "__main__"}
+    if builtins is not None:
+        user_globals["__builtins__"] = builtins
 
     with contextlib.redirect_stdout(stdout):
         sys.settrace(tracer.trace)
         try:
             exec(code, user_globals)
-        except StepLimitExceeded:
-            pass  # reported below through tracer.limit_hit
+        except (StepLimitExceeded, OutputLimitExceeded):
+            pass  # reported below through the limit_hit flags
         except BaseException as exc:  # SystemExit too: user code must not end us
             result["error"] = {
                 "type": type(exc).__name__,
@@ -236,8 +274,14 @@ def trace_code(source, max_steps=MAX_STEPS):
         finally:
             sys.settrace(None)
 
-    # Checked after exec: user code may have caught StepLimitExceeded with a
-    # bare `except:`, but the trace still stopped at the limit.
+    # Checked after exec: user code may have caught a limit exception with a
+    # bare `except:`, but the limit was still hit.
+    if stdout.limit_hit:
+        result["error"] = {
+            "type": "OutputLimitExceeded",
+            "message": f"output stopped at {max_output} characters",
+            "line": tracer.steps[-1]["line"] if tracer.steps else None,
+        }
     if tracer.limit_hit:
         last_line = tracer.steps[-1]["line"] if tracer.steps else None
         result["error"] = {
