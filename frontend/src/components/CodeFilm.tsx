@@ -18,25 +18,35 @@ interface Props {
 }
 
 // The code sits on a dark "film"; the current line is the exposed spot.
+// Monaco cannot read CSS variables, so these hex values copy the Radiograph
+// tokens in docs/design.md (--surface, --text, --text-faint, --text-muted,
+// --accent). Keep them in sync with styles.css.
 const defineFilmTheme: BeforeMount = (monaco) => {
   monaco.editor.defineTheme("xray-film", {
     base: "vs-dark",
     inherit: true,
     rules: [
-      { token: "comment", foreground: "6A8A9C", fontStyle: "italic" },
+      { token: "comment", foreground: "7894A5", fontStyle: "italic" },
       { token: "keyword", foreground: "8FCBE0" },
       { token: "string", foreground: "BCD9C5" },
       { token: "number", foreground: "E6CB92" },
     ],
     colors: {
-      "editor.background": "#12283A",
-      "editorGutter.background": "#12283A",
-      "editor.foreground": "#DCE6EA",
-      "editorLineNumber.foreground": "#4F6E82",
-      "editorLineNumber.activeForeground": "#A9C6D3",
+      "editor.background": "#111F2B",
+      "editorGutter.background": "#111F2B",
+      "editor.foreground": "#DCE7EC",
+      "editorLineNumber.foreground": "#6A8A9C",
+      "editorLineNumber.activeForeground": "#8BA3B1",
       "editor.lineHighlightBackground": "#00000000",
-      "editor.selectionBackground": "#2E5470",
+      "editor.selectionBackground": "#2B4A60",
       "editorCursor.foreground": "#7FD3E6",
+      // Plain brackets: rainbow bracket colors are outside the palette.
+      "editorBracketHighlight.foreground1": "#DCE7EC",
+      "editorBracketHighlight.foreground2": "#DCE7EC",
+      "editorBracketHighlight.foreground3": "#DCE7EC",
+      "editorBracketHighlight.foreground4": "#DCE7EC",
+      "editorBracketHighlight.foreground5": "#DCE7EC",
+      "editorBracketHighlight.foreground6": "#DCE7EC",
     },
   });
 };

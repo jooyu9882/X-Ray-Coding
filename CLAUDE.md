@@ -64,6 +64,9 @@ If `gh` is not available, push the branch, stop, and report that the PR must be 
 - Frontend: React + TypeScript + Monaco Editor
 - Deployment: backend on Render or Fly.io, frontend on Vercel
 
+## Visual design
+- `docs/design.md` (the dark "Radiograph" design system) is the source of truth for all UI. Every new or changed screen uses its tokens and component rules. No raw hex values in components, no new colors or fonts without adding them to `docs/design.md` first.
+
 ## Structure
 ```
 backend/
